@@ -1,6 +1,6 @@
 # SeSAC Farm (1.0 ver)
 
-## 평가과제
+## 평가과제 (~ 1/6)
 
 디자인 패턴 : MVVM
 FrameWork : UIkit
