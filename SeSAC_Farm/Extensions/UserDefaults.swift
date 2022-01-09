@@ -32,5 +32,6 @@ extension UserDefaults {
         UserDefaults.standard.removeObject(forKey: Constants.UserInfo.userName)
         UserDefaults.standard.removeObject(forKey: Constants.UserInfo.userId)
         UserDefaults.standard.removeObject(forKey: Constants.UserInfo.userEmail)
+        UserDefaults.standard.removeObject(forKey: Constants.UserInfo.password)
     }
 }

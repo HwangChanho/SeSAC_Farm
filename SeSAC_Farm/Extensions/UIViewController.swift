@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 extension UIViewController {
     func showToast(message : String, font: UIFont = UIFont.boldSystemFont(ofSize: 18)) {
@@ -18,7 +19,7 @@ extension UIViewController {
         let toastLabel = UILabel(frame: CGRect(x: xCenter, y: yCenter - 20, width: width, height: 100))
         
         toastLabel.backgroundColor = .lightGray
-        toastLabel.alpha = 0.6
+        toastLabel.alpha = 0.8
         toastLabel.textColor = .black
         toastLabel.font = font
         toastLabel.textAlignment = .center;
@@ -35,13 +36,49 @@ extension UIViewController {
             })
     }
     
+    func showEdgeToast(message : String, font: UIFont = UIFont.systemFont(ofSize: 15)) {
+        let view = UIView()
+        let toastLabel = UILabel()
+        
+        view.backgroundColor = .green
+        view.alpha = 0.8
+        
+        toastLabel.font = font
+        toastLabel.textColor = .white
+        toastLabel.backgroundColor = .clear
+        toastLabel.clipsToBounds = true
+        toastLabel.text = message
+        toastLabel.adjustsFontSizeToFitWidth = true
+        toastLabel.textAlignment = .center
+        
+        self.view.addSubview(view)
+        view.addSubview(toastLabel)
+        
+        view.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(UIScreen.main.bounds.height / 22)
+        }
+        
+        toastLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.width.equalTo(view.snp.width)
+            make.height.equalTo(view.snp.height)
+        }
+        
+        UIView.animate(withDuration: 2.0, delay: 1, options: .curveEaseOut, animations: {
+            view.alpha = 0.0 }, completion: {(isCompleted) in
+                view.removeFromSuperview()
+            })
+    }
+    
     func backToMainView() {
-        let ud = UserDefaults()
-        ud.removeUserDefaults()
+        //        let ud = UserDefaults()
+        //        ud.removeUserDefaults()
+        navigationController?.popToRootViewController(animated: true)
         
-        self.navigationController?.popToRootViewController(animated: true)
-        
-        showToast(message: "토큰 정보가 만료되었습니다. 재로그인 바랍니다.")
+        NotificationCenter.default.post(name: WelcomeViewController.notification, object: nil)
     }
     
     func moveToPostView() {

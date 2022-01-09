@@ -13,6 +13,7 @@ struct Constants {
         static let userName = "username"
         static let userId = "userId"
         static let userEmail = "userEmail"
+        static let password = "userPassword"
     }
 }
 

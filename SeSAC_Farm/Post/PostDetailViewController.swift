@@ -14,6 +14,7 @@ class PostDetailViewController: UIViewController {
     let tableView = UITableView()
     let textField = UITextField()
     let contentView = UIView()
+    let scrollView = UIScrollView()
     
     let viewModel = PostViewModel()
     let commentsViewModel = CommentsViewModel()
@@ -46,7 +47,7 @@ class PostDetailViewController: UIViewController {
         tableView.dataSource = self
         textField.delegate = self
     }
- 
+    
     func bindObjects() {
         topView.usernameLabel.text = postInfo?.user.username
         topView.textLabel.text = postInfo?.text
@@ -267,6 +268,9 @@ extension PostDetailViewController: UITextFieldDelegate {
         print("return")
         textField.resignFirstResponder()
         remakeTextField()
+        
+        if textField.text?.isEmpty == true { return false }
+        
         // 댓글 등록
         commentsViewModel.createComment(postId: postInfo!.id, text: textField.text!) { error in
             switch error?.statusCode {
@@ -276,7 +280,7 @@ extension PostDetailViewController: UITextFieldDelegate {
                 self.backToMainView()
             default:
                 // 이동
-                self.showToast(message: "등록 완료")
+                self.showEdgeToast(message: "등록 완료")
                 self.getComments()
             }
         }
@@ -295,7 +299,8 @@ extension PostDetailViewController: UITextFieldDelegate {
     }
 }
 
-// view
+// MARK: - UIView
+
 extension PostDetailViewController {
     func setupViewAndConstraints() {
         textField.placeholder = "댓글을 입력해주세요"
@@ -310,40 +315,49 @@ extension PostDetailViewController {
         textField.autocorrectionType = .no
         textField.returnKeyType = .done
         
+        scrollView.backgroundColor = .clear
+        
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 200
         
         tableView.separatorStyle = .none
         tableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
         
-        view.addSubview(contentView)
+        view.addSubview(scrollView)
         view.addSubview(textField)
         
         [topView, tableView].forEach { item in
-            contentView.addSubview(item)
+            scrollView.addSubview(item)
         }
         
         view.bringSubviewToFront(tableView)
-
-        contentView.snp.makeConstraints { make in
-            make.width.equalToSuperview()
+        
+        scrollView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide)
-            make.centerX.bottom.equalToSuperview()
+            make.bottom.equalTo(textField.snp.top).offset(-2)
         }
         
-        topView.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.right.equalToSuperview()
-            make.top.equalToSuperview()
-            make.height.greaterThanOrEqualTo(UIScreen.main.bounds.height / 4)
-        }
+        topView.translatesAutoresizingMaskIntoConstraints = false
         
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(topView.snp.bottom)
-            make.left.equalToSuperview()
-            make.right.equalToSuperview()
-            make.bottom.equalToSuperview()
-        }
+        NSLayoutConstraint.activate([
+            topView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            topView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            topView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            topView.heightAnchor.constraint(greaterThanOrEqualToConstant: UIScreen.main.bounds.height / 4),
+            topView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
+        ])
+        
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: topView.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: textField.topAnchor),
+            tableView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+            tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: UIScreen.main.bounds.height / 4)
+        ])
         
         textField.snp.makeConstraints { make in
             make.height.equalTo(50)

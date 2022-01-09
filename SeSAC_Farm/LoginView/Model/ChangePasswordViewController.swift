@@ -35,13 +35,13 @@ class ChangePasswordViewController: UIViewController {
     }
     
     func setDelegate() {
-        mainView.emailField.delegate = self
-        mainView.passwordField.delegate = self
-        mainView.passwordCheckField.delegate = self
+        mainView.emailField.delegate = self // 기존 비밀번호
+        mainView.passwordField.delegate = self // 신규 비밀번호
+        mainView.passwordCheckField.delegate = self // 신규 비밀번호 확인
     }
     
     func register() {
-        print(mainView.emailField.text!, mainView.passwordField.text!, mainView.passwordCheckField.text!)
+        let password = mainView.passwordField.text!
         
         if !submitFlag.contains(false) {
             viewModel.changePassword(currentPassword: mainView.emailField.text!, newPassword: mainView.passwordField.text!, confirmNewPassword: mainView.passwordCheckField.text!) { error in
@@ -53,6 +53,8 @@ class ChangePasswordViewController: UIViewController {
                 default:
                     // 이동
                     print("success")
+                    UserDefaults.standard.set(password, forKey: Constants.UserInfo.password)
+                    
                     self.navigationController?.popToRootViewController(animated: true)
                     self.showToast(message: "변경 완료")
                 }

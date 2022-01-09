@@ -31,6 +31,7 @@ class StartViewModel: UserDefaults {
             
             self.removeUserDefaults()
             self.saveUserDefaults(token: data.jwt, name: data.user.username, id: data.user.id, email: data.user.email)
+            UserDefaults.standard.set(self.password.value, forKey: Constants.UserInfo.password)
             
             completion(nil)
         }
