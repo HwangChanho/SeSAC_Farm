@@ -2,8 +2,8 @@
 
 ## 평가과제 (~ 1/6)
 
-디자인 패턴 : MVVM
-FrameWork : UIkit
+디자인 패턴 : MVVM </br>
+FrameWork : UIkit </br>
 개발기간: 이틀
 
 보완사항
